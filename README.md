@@ -30,7 +30,7 @@ The raw data is **not** included in this repository. Download the Instacart file
 ## Repository layout
 
 ```
-00_setup/          Infrastructure and data-loading SQL
+00_setup/          Infrastructure, data-loading and incremental-table SQL
 01_streams_tasks/
 02_dynamic_tables/
 03_dbt_project/
@@ -38,8 +38,42 @@ The raw data is **not** included in this repository. Download the Instacart file
 05_airflow/
 06_cortex/
 07_streamlit_app/
-data_generator/    Faker-based order generator
+common/            Snowflake connection helper (env-var based)
+data_generator/    Synthetic daily batch generator (pure, unit-tested)
+ingestion/         Historical loader and per-batch loader
+tests/             pytest unit tests
+run_daily_batch.py One command = one simulated day of new orders
 ```
+
+## Quick start
+
+```bash
+pip install -r requirements.txt
+
+# Connection settings (PowerShell: $env:NAME = "value")
+export SNOWFLAKE_ACCOUNT=<org-account>
+export SNOWFLAKE_USER=<user>
+# Password and MFA code are prompted if not set. For automation use
+# SNOWFLAKE_PRIVATE_KEY_PATH (key-pair auth) instead.
+
+# 1) One-off historical load (idempotent)
+python -m ingestion.load_historical --data-dir /path/to/instacart
+
+# 2) Simulate a new day: generates 5,000 orders, stages them and COPYs them into RAW
+python run_daily_batch.py
+python run_daily_batch.py --orders 10000 --seed 42   # other volume / reproducible
+python run_daily_batch.py --dry-run                  # generate CSVs only
+
+# 3) Tests (no Snowflake connection needed)
+pytest
+```
+
+### How the incremental load works
+
+Each run reads the current state from Snowflake (highest `order_id`, last `order_number`
+per customer, product popularity, last simulated date), generates a batch for the next
+simulated day, uploads it with unique file names to `@STG_INCREMENTAL`, and runs
+`COPY INTO`. `COPY INTO` keeps load metadata, so a staged file is never loaded twice.
 
 ## Cost safety
 
@@ -57,7 +91,7 @@ No credentials are stored in this repo. Use environment variables or a local, gi
 
 ## Status
 
-- [ ] 00 Setup
+- [ ] 00 Setup (infrastructure and historical load done; daily batch loader pending first run)
 - [ ] 01 Streams & Tasks
 - [ ] 02 Dynamic Tables
 - [ ] 03 dbt
