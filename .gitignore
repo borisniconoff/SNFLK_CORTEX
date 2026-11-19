@@ -1,0 +1,36 @@
+# Secrets and local configuration
+.env
+.env.*
+profiles.yml
+*.pem
+*.p8
+*.key
+config.toml
+connections.toml
+
+# Data (never commit raw datasets)
+data/
+*.csv
+*.csv.gz
+*.parquet
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# Airflow
+airflow/logs/
+airflow/airflow.db
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
