@@ -12,9 +12,17 @@ AS
   INSERT INTO STAGING.ORDERS_CONSUMED(order_id, user_id, eval_set, order_number, order_dow, order_hour_of_day, days_since_prior_order, order_date, batch_id, _loaded_at)
   SELECT order_id, user_id, eval_set, order_number, order_dow, order_hour_of_day, days_since_prior_order, order_date, batch_id, _loaded_at
   FROM RAW.ORDERS_INCREMENTAL_STREAM;
+
 SHOW TASKS;
+
 ALTER TASK RAW.CONSUME_ORDERS_TASK RESUME; --started
+
 SELECT COUNT(*) FROM RAW.ORDERS_INCREMENTAL_STREAM;
+
 SELECT COUNT(*) FROM STAGING.ORDERS_CONSUMED;
+
 ALTER TASK RAW.CONSUME_ORDERS_TASK SUSPEND;
+
 SELECT SCHEDULED_TIME, STATE ,ERROR_MESSAGE FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(TASK_NAME => 'CONSUME_ORDERS_TASK')) ORDER BY SCHEDULED_TIME DESC;
+
+CREATE OR REPLACE TASK 
