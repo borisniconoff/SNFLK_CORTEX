@@ -112,7 +112,7 @@ No credentials are stored in this repo. Use environment variables or a local, gi
 Detailed progress, with the evidence for each item, lives in [`PLAN.md`](PLAN.md).
 
 - [x] 00 Setup (infrastructure, historical load and daily batch loader)
-- [x] 01 Streams & Tasks (in progress: stream, consumer task and chained task done; end-to-end test pending)
+- [ ] 01 Streams & Tasks (in progress: stream, consumer task and chained task done; end-to-end test pending)
 - [ ] 02 Dynamic Tables
 - [ ] 03 dbt
 - [ ] 04 Snowpark
