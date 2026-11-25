@@ -23,9 +23,6 @@
 --   (stream, STAGING.ORDERS_CONSUMED and RAW.CONSUME_ORDERS_TASK exist).
 -- Idempotent: the MERGE recomputes each batch, so running the child twice
 --   never duplicates rows.
--- Warning: do not re-run the CREATE OR REPLACE TASK of 02_tasks.sql once the
---   graph exists without checking SHOW TASKS afterwards (see "predecessors").
---   To change the root use ALTER TASK ... SUSPEND / SET / MODIFY AS instead.
 -- ============================================================
 USE ROLE LAB_ROLE;
 USE SECONDARY ROLES NONE;
